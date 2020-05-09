@@ -25,6 +25,8 @@ Rails.application.configure do
       write_timeout:      0.2, # Defaults to 1 second
       reconnect_attempts: 1,   # Defaults to 0
 
+      ssl: true,
+
       error_handler: lambda { |method:, returning:, exception:|
         config.logger.warn "Support: Redis cache action #{method} failed and returned '#{returning}': #{exception}"
       } }
