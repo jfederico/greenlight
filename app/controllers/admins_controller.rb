@@ -262,6 +262,8 @@ class AdminsController < ApplicationController
   def clear_cache
     Rails.cache.delete("#{@user_domain}/getUser")
     Rails.cache.delete("#{@user_domain}/getUserGreenlightCredentials")
+    # Also clear the session[provider_info]
+    session.delete(:provider_info)
 
     redirect_to admin_site_settings_path(tab: "settings"), flash: { success: I18n.t("administrator.flash.settings") }
   end

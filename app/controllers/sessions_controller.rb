@@ -103,6 +103,7 @@ class SessionsController < ApplicationController
   # GET/POST /auth/:provider/callback
   def omniauth
     @auth = request.env['omniauth.auth']
+    @auth_strategy = request.env['omniauth.strategy'].options
 
     begin
       process_signin
@@ -212,7 +213,7 @@ class SessionsController < ApplicationController
     # Switch the user to a social account if they exist under the same email with no social uid
     switch_account_to_social if !@user_exists && auth_changed_to_social?(@auth['info']['email'])
 
-    user = User.from_omniauth(@auth)
+    user = User.from_omniauth(@auth, @auth_strategy)
 
     logger.info "Support: Auth user #{user.email} is attempting to login."
 

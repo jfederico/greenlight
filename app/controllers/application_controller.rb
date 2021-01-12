@@ -28,15 +28,18 @@ class ApplicationController < ActionController::Base
   # Retrieves the current user.
   def current_user
     @current_user ||= User.includes(:role, :main_room).find_by(id: session[:user_id])
+    logger.info session[:user_id]
+    logger.info @current_user.to_json
+    logger.info @user_domain.to_json
 
-    if Rails.configuration.loadbalanced_configuration
-      if @current_user && !@current_user.has_role?(:super_admin) &&
-         @current_user.provider != @user_domain
-        @current_user = nil
+    return nil unless @current_user
+    return @current_user unless Rails.configuration.loadbalanced_configuration
+    return @current_user if @current_user.has_role?(:super_admin)
+
+    if @current_user.provider != @user_domain
         session.clear
-      end
+        @current_user = nil
     end
-
     @current_user
   end
   helper_method :current_user
@@ -60,13 +63,15 @@ class ApplicationController < ActionController::Base
 
   # Sets the user domain variable
   def set_user_domain
-    if Rails.env.test? || !Rails.configuration.loadbalanced_configuration
-      @user_domain = "greenlight"
-    else
-      @user_domain = parse_user_domain(request.host)
+    @user_domain = "greenlight"
+    # Use default for testing.
+    return if Rails.env.test?
+    # Use default if no loadbalancer associated.
+    return unless Rails.configuration.loadbalanced_configuration
 
-      check_provider_exists
-    end
+    @user_domain = parse_user_domain(request.host)
+
+    check_provider_exists
   end
 
   # Sets the settinfs variable
@@ -153,8 +158,10 @@ class ApplicationController < ActionController::Base
     return false if @user_domain == "greenlight"
     # Proceed with retrieving the provider info
     begin
-      provider_info = retrieve_provider_info(@user_domain, 'api2', 'getUserGreenlightCredentials')
-      provider_info['provider'] == 'greenlight'
+      #@provider_info = retrieve_provider_info(@user_domain, 'api2', 'getUserGreenlightCredentials')
+      logger.info ">>>>>>>>>>>>>>>>>>>>>>>"
+      logger.info @provider_info.to_json
+      @provider_info['provider'] == 'greenlight'
     rescue => e
       logger.error "Error in checking if greenlight accounts are allowed: #{e}"
       false
@@ -257,14 +264,9 @@ class ApplicationController < ActionController::Base
   def check_provider_exists
     # Checks to see if the user exists
     begin
-      # Check if the session has already checked that the user exists
-      # and return true if they did for this domain
-      return if session[:provider_exists] == @user_domain
-
-      retrieve_provider_info(@user_domain, 'api2', 'getUserGreenlightCredentials')
-
-      # Add a session variable if the provider exists
-      session[:provider_exists] = @user_domain
+      @provider_info = session[:provider_info] || retrieve_provider_info(@user_domain, 'api2', 'getUserGreenlightCredentials')
+      logger.info @provider_info
+      session[:provider_info] = @provider_info
     rescue => e
       logger.error "Error in retrieve provider info: #{e}"
       @hide_signin = true

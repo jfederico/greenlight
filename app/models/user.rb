@@ -57,9 +57,16 @@ class User < ApplicationRecord
     include Queries
 
     # Generates a user from omniauth.
-    def from_omniauth(auth)
+    def from_omniauth(auth, auth_strategy)
+      logger.info "---------------------------->"
+      logger.info auth.to_json
+      logger.info auth_strategy.to_json
       # Provider is the customer name if in loadbalanced config mode
-      provider = auth['provider'] == "bn_launcher" ? auth['info']['customer'] : auth['provider']
+      provider = auth['provider']
+      provider = auth['info']['customer'] if auth['provider'] == "bn_launcher"
+      provider = auth['extra']['raw_info']['customer'] if auth['provider'] == "openid_connect"
+      # provider = 'user1'
+
       find_or_initialize_by(social_uid: auth['uid'], provider: provider).tap do |u|
         u.name = auth_name(auth) unless u.name
         u.username = auth_username(auth) unless u.username
