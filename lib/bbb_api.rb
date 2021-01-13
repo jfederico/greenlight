@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'xmlsimple'
+
 module BbbApi
   RETURNCODE_SUCCESS = "SUCCESS"
 
@@ -39,7 +41,7 @@ module BbbApi
       route
     )
 
-    logger.info uri
+    Rails.logger.info uri
 
     # Make the request.
     http = Net::HTTP.new(uri.host, uri.port)

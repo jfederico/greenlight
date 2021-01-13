@@ -16,24 +16,36 @@
 # You should have received a copy of the GNU Lesser General Public License along
 # with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
+require 'bbb_api'
+
 module OmniauthOptions
   module_function
 
+  include BbbApi
+
   def omniauth_options(env)
-    if env['omniauth.strategy'].options[:name] == "bn_launcher"
+    if Rails.configuration.loadbalanced_configuration
       protocol = Rails.env.production? ? "https" : env["rack.url_scheme"]
       protocol = "https"
-
-      customer_redirect_url = protocol + "://" + env["SERVER_NAME"] + ":" +
-                              env["SERVER_PORT"]
       user_domain = parse_user_domain(env["SERVER_NAME"])
-      env['omniauth.strategy'].options[:customer] = user_domain
-      env['omniauth.strategy'].options[:customer_redirect_url] = customer_redirect_url
-      env['omniauth.strategy'].options[:default_callback_url] = Rails.configuration.gl_callback_url
+      if env['omniauth.strategy'].options[:name] == "bn_launcher"
+        customer_redirect_url = protocol + "://" + env["SERVER_NAME"] + ":" + env["SERVER_PORT"]
+        env['omniauth.strategy'].options[:customer] = user_domain
+        env['omniauth.strategy'].options[:customer_redirect_url] = customer_redirect_url
+        env['omniauth.strategy'].options[:default_callback_url] = Rails.configuration.gl_callback_url
 
-      # This is only used in the old launcher and should eventually be removed
-      env['omniauth.strategy'].options[:checksum] = generate_checksum(user_domain, customer_redirect_url,
-        Rails.configuration.launcher_secret)
+        # This is only used in the old launcher and should eventually be removed
+        env['omniauth.strategy'].options[:checksum] = generate_checksum(user_domain, customer_redirect_url,
+          Rails.configuration.launcher_secret)
+      elsif env['omniauth.strategy'].options[:name] == "openid_connect"
+        Rails.logger.info "+++++++++++++++++++++++++++++++++"
+        provider_info = retrieve_provider_info(user_domain, 'api2', 'getUserGreenlightCredentials')
+        Rails.logger.info provider_info.to_json
+        Rails.logger.info provider_info['BN_CONNECT_CLIENT_ID']
+        env['omniauth.strategy'].options[:issuer] = provider_info['BN_CONNECT_ISSUER']
+        env['omniauth.strategy'].options[:client_options].identifier = provider_info['BN_CONNECT_CLIENT_ID']
+        env['omniauth.strategy'].options[:client_options].secret = provider_info['BN_CONNECT_CLIENT_SECRET']
+      end
     elsif env['omniauth.strategy'].options[:name] == "google"
       set_hd(env, ENV['GOOGLE_OAUTH2_HD'])
     elsif env['omniauth.strategy'].options[:name] == "office365"

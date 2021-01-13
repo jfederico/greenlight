@@ -65,7 +65,6 @@ class User < ApplicationRecord
       provider = auth['provider']
       provider = auth['info']['customer'] if auth['provider'] == "bn_launcher"
       provider = auth['extra']['raw_info']['customer'] if auth['provider'] == "openid_connect"
-      # provider = 'user1'
 
       find_or_initialize_by(social_uid: auth['uid'], provider: provider).tap do |u|
         u.name = auth_name(auth) unless u.name
