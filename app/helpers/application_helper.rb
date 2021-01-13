@@ -25,6 +25,7 @@ module ApplicationHelper
     providers = configured_providers & [:google, :twitter, :office365, :openid_connect, :ldap]
 
     providers.delete(:twitter) if session[:old_twitter_user_id]
+    providers.delete(:openid_connect) if Rails.configuration.loadbalanced_configuration
 
     providers
   end
