@@ -25,30 +25,34 @@ module OmniauthOptions
 
   def omniauth_options(env)
     if Rails.configuration.loadbalanced_configuration
-      protocol = Rails.env.production? ? "https" : env["rack.url_scheme"]
-      user_domain = parse_user_domain(env["SERVER_NAME"])
-      if env['omniauth.strategy'].options[:name] == 'bn_launcher'
-        bn_launcher_redirect_url = protocol + "://" + env["SERVER_NAME"] + ":" + env["SERVER_PORT"]
-        env['omniauth.strategy'].options[:customer] = user_domain
-        env['omniauth.strategy'].options[:customer_redirect_url] = bn_launcher_redirect_url
-        env['omniauth.strategy'].options[:default_callback_url] = Rails.configuration.gl_callback_url
-
-        # This is only used in the old launcher and should eventually be removed
-        env['omniauth.strategy'].options[:checksum] = generate_checksum(user_domain, bn_launcher_redirect_url,
-          Rails.configuration.launcher_secret)
-      elsif env['omniauth.strategy'].options[:name] == 'openid_connect'
-        provider_info = retrieve_provider_info(user_domain, 'api2', 'getUserGreenlightCredentials')
-        env['omniauth.strategy'].options[:issuer] = provider_info['BN_CONNECT_ISSUER']
-        env['omniauth.strategy'].options[:client_options].identifier = provider_info['BN_CONNECT_CLIENT_ID']
-        env['omniauth.strategy'].options[:client_options].secret = provider_info['BN_CONNECT_CLIENT_SECRET']
-        # Override redirect_uri.
-        env['omniauth.strategy'].options[:client_options].redirect_uri = customer_redirect_url('openid_connect', user_domain)
-      end
+      omniauth_options_loadbalancer(env)
     elsif env['omniauth.strategy'].options[:name] == 'google'
       set_hd(env, ENV['GOOGLE_OAUTH2_HD'])
     elsif env['omniauth.strategy'].options[:name] == 'office365'
       set_hd(env, ENV['OFFICE365_HD'])
     elsif env['omniauth.strategy'].options[:name] == 'openid_connect'
+      set_hd(env, ENV['OPENID_CONNECT_HD'])
+    end
+  end
+
+  def omniauth_options_loadbalancer(env)
+    user_domain = parse_user_domain(env["SERVER_NAME"])
+    if env['omniauth.strategy'].options[:name] == 'bn_launcher'
+      protocol = Rails.env.production? ? "https" : env["rack.url_scheme"]
+      bn_launcher_redirect_url = protocol + "://" + env["SERVER_NAME"] + ":" + env["SERVER_PORT"]
+      env['omniauth.strategy'].options[:customer] = user_domain
+      env['omniauth.strategy'].options[:customer_redirect_url] = bn_launcher_redirect_url
+      env['omniauth.strategy'].options[:default_callback_url] = Rails.configuration.gl_callback_url
+      # This is only used in the old launcher and should eventually be removed
+      env['omniauth.strategy'].options[:checksum] = generate_checksum(user_domain, bn_launcher_redirect_url,
+        Rails.configuration.launcher_secret)
+    elsif env['omniauth.strategy'].options[:name] == 'openid_connect'
+      provider_info = retrieve_provider_info(user_domain, 'api2', 'getUserGreenlightCredentials')
+      env['omniauth.strategy'].options[:issuer] = provider_info['BN_CONNECT_ISSUER']
+      env['omniauth.strategy'].options[:client_options].identifier = provider_info['BN_CONNECT_CLIENT_ID']
+      env['omniauth.strategy'].options[:client_options].secret = provider_info['BN_CONNECT_CLIENT_SECRET']
+      # Override redirect_uri.
+      env['omniauth.strategy'].options[:client_options].redirect_uri = customer_redirect_url('openid_connect', user_domain)
       set_hd(env, ENV['OPENID_CONNECT_HD'])
     end
   end
@@ -107,5 +111,4 @@ module OmniauthOptions
     uri.host = "#{user_domain}.#{uri.host}"
     uri.to_s
   end
-
 end
