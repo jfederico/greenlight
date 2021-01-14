@@ -103,13 +103,6 @@ class SessionsController < ApplicationController
   # GET/POST /auth/:provider/callback
   def omniauth
     @auth = request.env['omniauth.auth']
-    @auth_strategy = request.env['omniauth.strategy'].options
-
-    logger.info "----------------------------> omniauth"
-    logger.info @auth.to_json
-    logger.info @auth_strategy.to_json
-    logger.info "provider:#{@auth['provider']}"
-    logger.info "user_domain:#{@user_domain}"
 
     begin
       process_signin

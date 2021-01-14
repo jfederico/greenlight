@@ -60,7 +60,7 @@ class User < ApplicationRecord
     def from_omniauth(auth, user_domain)
       # Provider is set with the authentication method by default.
       provider = auth['provider']
-      # Provider is set with the customer name if in loadbalanced config mode.
+      # Provider is upsated with the customer name if in loadbalanced config mode.
       provider = user_domain unless user_domain == 'greenlight'
 
       find_or_initialize_by(social_uid: auth['uid'], provider: provider).tap do |u|

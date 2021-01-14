@@ -28,12 +28,13 @@ module OmniauthOptions
       protocol = Rails.env.production? ? "https" : env["rack.url_scheme"]
       user_domain = parse_user_domain(env["SERVER_NAME"])
       if env['omniauth.strategy'].options[:name] == 'bn_launcher'
+        bn_launcher_redirect_url = protocol + "://" + env["SERVER_NAME"] + ":" + env["SERVER_PORT"]
         env['omniauth.strategy'].options[:customer] = user_domain
-        env['omniauth.strategy'].options[:customer_redirect_url] = protocol + "://" + env["SERVER_NAME"] + ":" + env["SERVER_PORT"]
+        env['omniauth.strategy'].options[:customer_redirect_url] = bn_launcher_redirect_url
         env['omniauth.strategy'].options[:default_callback_url] = Rails.configuration.gl_callback_url
 
         # This is only used in the old launcher and should eventually be removed
-        env['omniauth.strategy'].options[:checksum] = generate_checksum(user_domain, customer_redirect_url,
+        env['omniauth.strategy'].options[:checksum] = generate_checksum(user_domain, bn_launcher_redirect_url,
           Rails.configuration.launcher_secret)
       elsif env['omniauth.strategy'].options[:name] == 'openid_connect'
         provider_info = retrieve_provider_info(user_domain, 'api2', 'getUserGreenlightCredentials')
@@ -41,7 +42,6 @@ module OmniauthOptions
         env['omniauth.strategy'].options[:client_options].identifier = provider_info['BN_CONNECT_CLIENT_ID']
         env['omniauth.strategy'].options[:client_options].secret = provider_info['BN_CONNECT_CLIENT_SECRET']
         # Override redirect_uri.
-        redirect_url = URI::HTTPS
         env['omniauth.strategy'].options[:client_options].redirect_uri = customer_redirect_url('openid_connect', user_domain)
       end
     elsif env['omniauth.strategy'].options[:name] == 'google'
@@ -77,8 +77,8 @@ module OmniauthOptions
   end
 
   # Generates a checksum to use alongside the omniauth request
-  def generate_checksum(user_domain, redirect_url, secret)
-    string = user_domain + redirect_url + secret
+  def generate_checksum(user_domain, omniauth_redirect_url, secret)
+    string = user_domain + omniauth_redirect_url + secret
     OpenSSL::Digest.digest('sha1', string).unpack1("H*")
   end
 
