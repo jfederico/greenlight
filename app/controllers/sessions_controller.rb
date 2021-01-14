@@ -105,6 +105,12 @@ class SessionsController < ApplicationController
     @auth = request.env['omniauth.auth']
     @auth_strategy = request.env['omniauth.strategy'].options
 
+    logger.info "----------------------------> omniauth"
+    logger.info @auth.to_json
+    logger.info @auth_strategy.to_json
+    logger.info "provider:#{@auth['provider']}"
+    logger.info "user_domain:#{@user_domain}"
+
     begin
       process_signin
     rescue => e
@@ -186,7 +192,9 @@ class SessionsController < ApplicationController
   end
 
   def current_provider
-    @auth['provider'] == "bn_launcher" ? @auth['info']['customer'] : @auth['provider']
+    return @user_domain if @auth['provider'] == "bn_launcher"
+
+    @auth['provider']
   end
 
   # Check if the user already exists, if not then check for invitation
@@ -213,7 +221,7 @@ class SessionsController < ApplicationController
     # Switch the user to a social account if they exist under the same email with no social uid
     switch_account_to_social if !@user_exists && auth_changed_to_social?(@auth['info']['email'])
 
-    user = User.from_omniauth(@auth, @auth_strategy)
+    user = User.from_omniauth(@auth, @user_domain)
 
     logger.info "Support: Auth user #{user.email} is attempting to login."
 

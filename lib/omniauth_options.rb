@@ -26,31 +26,29 @@ module OmniauthOptions
   def omniauth_options(env)
     if Rails.configuration.loadbalanced_configuration
       protocol = Rails.env.production? ? "https" : env["rack.url_scheme"]
-      protocol = "https"
       user_domain = parse_user_domain(env["SERVER_NAME"])
-      if env['omniauth.strategy'].options[:name] == "bn_launcher"
-        customer_redirect_url = protocol + "://" + env["SERVER_NAME"] + ":" + env["SERVER_PORT"]
+      if env['omniauth.strategy'].options[:name] == 'bn_launcher'
         env['omniauth.strategy'].options[:customer] = user_domain
-        env['omniauth.strategy'].options[:customer_redirect_url] = customer_redirect_url
+        env['omniauth.strategy'].options[:customer_redirect_url] = protocol + "://" + env["SERVER_NAME"] + ":" + env["SERVER_PORT"]
         env['omniauth.strategy'].options[:default_callback_url] = Rails.configuration.gl_callback_url
 
         # This is only used in the old launcher and should eventually be removed
         env['omniauth.strategy'].options[:checksum] = generate_checksum(user_domain, customer_redirect_url,
           Rails.configuration.launcher_secret)
-      elsif env['omniauth.strategy'].options[:name] == "openid_connect"
-        Rails.logger.info "+++++++++++++++++++++++++++++++++"
+      elsif env['omniauth.strategy'].options[:name] == 'openid_connect'
         provider_info = retrieve_provider_info(user_domain, 'api2', 'getUserGreenlightCredentials')
-        Rails.logger.info provider_info.to_json
-        Rails.logger.info provider_info['BN_CONNECT_CLIENT_ID']
         env['omniauth.strategy'].options[:issuer] = provider_info['BN_CONNECT_ISSUER']
         env['omniauth.strategy'].options[:client_options].identifier = provider_info['BN_CONNECT_CLIENT_ID']
         env['omniauth.strategy'].options[:client_options].secret = provider_info['BN_CONNECT_CLIENT_SECRET']
+        # Override redirect_uri.
+        redirect_url = URI::HTTPS
+        env['omniauth.strategy'].options[:client_options].redirect_uri = customer_redirect_url('openid_connect', user_domain)
       end
-    elsif env['omniauth.strategy'].options[:name] == "google"
+    elsif env['omniauth.strategy'].options[:name] == 'google'
       set_hd(env, ENV['GOOGLE_OAUTH2_HD'])
-    elsif env['omniauth.strategy'].options[:name] == "office365"
+    elsif env['omniauth.strategy'].options[:name] == 'office365'
       set_hd(env, ENV['OFFICE365_HD'])
-    elsif env['omniauth.strategy'].options[:name] == "openid_connect"
+    elsif env['omniauth.strategy'].options[:name] == 'openid_connect'
       set_hd(env, ENV['OPENID_CONNECT_HD'])
     end
   end
@@ -83,4 +81,31 @@ module OmniauthOptions
     string = user_domain + redirect_url + secret
     OpenSSL::Digest.digest('sha1', string).unpack1("H*")
   end
+
+  # Generates redirect_url
+  def redirect_url(provider)
+    oauth2_redirect = ENV['OAUTH2_REDIRECT']
+    unless oauth2_redirect.blank?
+      # Builds URI based on OAUTH2_REDIRECT.
+      uri = URI(oauth2_redirect)
+      uri.path = "/auth/#{provider}/callback"
+      return uri.to_s
+    end
+    url_host = ENV['URL_HOST']
+    if url_host.blank?
+      # Builds URI based on URL_HOST.
+      URI::HTTPS.build(host: url_host, path: "/auth/#{provider}/callback").to_s
+    end
+    nil
+  end
+
+  # Generates redirect_url
+  def customer_redirect_url(provider, user_domain)
+    return nil if provider.blank?
+
+    uri = URI(redirect_url(provider))
+    uri.host = "#{user_domain}.#{uri.host}"
+    uri.to_s
+  end
+
 end

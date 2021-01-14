@@ -78,10 +78,10 @@ module Greenlight
       # Fix endpoint format if required.
       config.loadbalancer_endpoint += "/" unless config.bigbluebutton_endpoint.ends_with?("/")
       config.loadbalancer_endpoint = config.loadbalancer_endpoint.chomp("api/")
-
-      # Configure which settings are available to user on room creation/edit after creation
-      config.url_host = ENV['URL_HOST'] || ''
     end
+
+    # Specify the FQDN hostname used across the application.
+    config.url_host = ENV['URL_HOST'] || ''
 
     # Specify the email address that all mail is sent from
     config.smtp_sender = ENV['SMTP_SENDER'] || "notifications@example.com"

@@ -90,7 +90,6 @@
           </div>
         <% elsif show_signin %>
           <% allow_greenlight_accounts = allow_greenlight_accounts? %>
-          <% Rails.logger.info @provider_info %>
           <% if allow_greenlight_accounts %>
             <%= link_to t("login"), signin_path, :class => "btn btn-outline-primary mx-2 sign-in-button" %>
           <% elsif Rails.configuration.loadbalanced_configuration %>

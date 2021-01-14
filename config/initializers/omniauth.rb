@@ -2,6 +2,7 @@
 
 require 'office365'
 require 'omniauth_options'
+require 'uri'
 
 include OmniauthOptions
 
@@ -32,8 +33,6 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   if Rails.configuration.omniauth_openid_connect
     Rails.application.config.providers << :openid_connect
 
-    redirect = ENV['OAUTH2_REDIRECT'].present? ? File.join(ENV['OAUTH2_REDIRECT'], "auth", "openid_connect", "callback") : nil
-
     provider :openid_connect,
       issuer: ENV["OPENID_CONNECT_ISSUER"],
       discovery: true,
@@ -43,7 +42,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
       client_options: {
         identifier: ENV['OPENID_CONNECT_CLIENT_ID'],
         secret: ENV['OPENID_CONNECT_CLIENT_SECRET'],
-        redirect_uri: redirect
+        redirect_uri: redirect_url('openid_connect'),
       },
       setup: SETUP_PROC
   end
@@ -63,22 +62,18 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     if Rails.configuration.omniauth_google
       Rails.application.config.providers << :google
 
-      redirect = ENV['OAUTH2_REDIRECT'].present? ? File.join(ENV['OAUTH2_REDIRECT'], "auth", "google", "callback") : nil
-
       provider :google_oauth2, ENV['GOOGLE_OAUTH2_ID'], ENV['GOOGLE_OAUTH2_SECRET'],
         scope: %w(profile email),
         access_type: 'online',
         name: 'google',
-        redirect_uri: redirect,
+        redirect_uri: redirect_url('google'),
         setup: SETUP_PROC
     end
     if Rails.configuration.omniauth_office365
       Rails.application.config.providers << :office365
 
-      redirect = ENV['OAUTH2_REDIRECT'].present? ? File.join(ENV['OAUTH2_REDIRECT'], "auth", "office365", "callback") : nil
-
       provider :office365, ENV['OFFICE365_KEY'], ENV['OFFICE365_SECRET'],
-        redirect_uri: redirect,
+        redirect_uri: redirect_url('office365'),
         setup: SETUP_PROC
     end
   end

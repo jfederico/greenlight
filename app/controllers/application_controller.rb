@@ -28,9 +28,6 @@ class ApplicationController < ActionController::Base
   # Retrieves the current user.
   def current_user
     @current_user ||= User.includes(:role, :main_room).find_by(id: session[:user_id])
-    logger.info session[:user_id]
-    logger.info @current_user.to_json
-    logger.info @user_domain.to_json
 
     return nil unless @current_user
     return @current_user unless Rails.configuration.loadbalanced_configuration
@@ -156,11 +153,7 @@ class ApplicationController < ActionController::Base
     return Rails.configuration.allow_user_signup unless Rails.configuration.loadbalanced_configuration
     return false unless @user_domain && !@user_domain.empty? && Rails.configuration.allow_user_signup
     return false if @user_domain == "greenlight"
-    # Proceed with retrieving the provider info
     begin
-      #@provider_info = retrieve_provider_info(@user_domain, 'api2', 'getUserGreenlightCredentials')
-      logger.info ">>>>>>>>>>>>>>>>>>>>>>>"
-      logger.info @provider_info.to_json
       @provider_info['provider'] == 'greenlight'
     rescue => e
       logger.error "Error in checking if greenlight accounts are allowed: #{e}"
@@ -265,7 +258,6 @@ class ApplicationController < ActionController::Base
     # Checks to see if the user exists
     begin
       @provider_info = session[:provider_info] || retrieve_provider_info(@user_domain, 'api2', 'getUserGreenlightCredentials')
-      logger.info @provider_info
       session[:provider_info] = @provider_info
     rescue => e
       logger.error "Error in retrieve provider info: #{e}"
