@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 if [ -f .env ]; then
   export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
@@ -12,4 +12,4 @@ then
   gem install foreman
 fi
 
-foreman start -f Procfile.dev "$@"
+foreman start -f Procfile "$@"
