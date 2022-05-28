@@ -304,7 +304,7 @@ GEM
     puma (4.3.12)
       nio4r (~> 2.0)
     racc (1.6.0)
-    rack (2.2.3)
+    rack (2.2.3.1)
     rack-oauth2 (1.19.0)
       activesupport
       attr_required
@@ -483,18 +483,18 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  action-cable-testing (~> 0.6)
+  action-cable-testing (~> 0.6, >= 0.6.1)
   aws-sdk-s3 (~> 1.88.1)
   bcrypt (~> 3.1.7)
-  bigbluebutton-api-ruby (~> 1.9)
+  bigbluebutton-api-ruby (~> 1.9, >= 1.9.0)
   bn-ldap-authentication (~> 0.1.4)
   bootsnap (~> 1.7.2)
   bootstrap (~> 4.3.1)
   byebug (~> 11.1)
   cancancan (~> 2.3.0)
   coveralls (~> 0.8.23)
-  dotenv-rails (~> 2.7)
-  factory_bot_rails (~> 6.1)
+  dotenv-rails (~> 2.7, >= 2.7.6)
+  factory_bot_rails (~> 6.2, >= 6.2.0)
   faker (~> 2.16)
   font-awesome-sass (~> 5.9.0)
   google-cloud-storage (~> 1.30.0)
@@ -520,14 +520,14 @@ DEPENDENCIES
   pluck_to_hash (~> 1.0.2)
   puma (~> 4.3.12)
   rails (~> 5.2.7.1)
-  rails-controller-testing (~> 1.0)
+  rails-controller-testing (~> 1.0, >= 1.0.5)
   random_password (~> 0.1.1)
   recaptcha (~> 5.7.0)
   redcarpet (~> 3.5.1)
   redis (~> 4.2.5)
   remote_syslog_logger (~> 1.0.4)
   repost (~> 0.3.8)
-  rspec-rails (~> 3.7)
+  rspec-rails (~> 3.9, >= 3.9.1)
   rubocop (~> 1.10.0)
   sassc-rails (~> 2.1.2)
   sequel (~> 5.41.0)
@@ -540,5 +540,8 @@ DEPENDENCIES
   turbolinks (~> 5.2.1)
   tzinfo-data (~> 1.2021.1)
   uglifier (~> 4.2.0)
-  web-console (~> 3.7)
+  web-console (~> 3.7, >= 3.7.0)
   webmock (~> 3.11)
+
+BUNDLED WITH
+   2.1.4
