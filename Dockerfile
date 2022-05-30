@@ -60,4 +60,4 @@ ENV VERSION_CODE=$VERSION_CODE
 
 EXPOSE 3000
 
-CMD [ "./bin/start" ]
+ENTRYPOINT [ "./bin/start" ]
