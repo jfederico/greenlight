@@ -35,20 +35,9 @@ RUN apk add --no-cache \
     yaml-dev \
     zlib-dev \
     && ( echo 'install: --no-document' ; echo 'update: --no-document' ) >>/etc/gemrc
-COPY Gemfile* ./
-RUN bundle install \
-    && yarn install
-#    && rm -rf vendor/bundle/ruby/*/cache \
-#    && find vendor/bundle/ruby/*/gems/ \( -name '*.c' -o -name '*.o' \) -delete
-#RUN gem install bundler
-#RUN bundle config build.nokogiri --use-system-libraries \
-#    && bundle config set --local deployment 'true'  without 'development:test' \
-#    && bundle install -j4 \
-#    && yarn install
-#    && rm -rf vendor/bundle/ruby/*/cache \
-#    && find vendor/bundle/ruby/*/gems/ \( -name '*.c' -o -name '*.o' \) -delete
 COPY . ./
-#USER greenlight:greenlight
+RUN bundle install -j4 \
+    && yarn install
 
 ARG RAILS_ENV
 ENV RAILS_ENV=${RAILS_ENV:-production}
