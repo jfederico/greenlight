@@ -61,3 +61,11 @@ rake db:create
 rake db:migrate:with_data
 
 ./bin/start
+
+
+For production
+
+RAILS_ENV=production
+RAILS_SERVE_STATIC_FILES=true
+
+rake assets:precompile
