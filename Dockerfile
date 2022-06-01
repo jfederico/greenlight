@@ -23,6 +23,7 @@ RUN apk add --no-cache \
     build-base \
     curl-dev \
     git \
+    gettext \
     libxml2-dev \
     libxslt-dev \
     pkgconf \
