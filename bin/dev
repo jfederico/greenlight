@@ -1,10 +1,4 @@
-#!/usr/bin/env sh
-
-if [ -f .env ]; then
-  export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
-fi
-export PORT="${PORT:=3000}"
-echo "Web app starting on port: $PORT"
+#!/usr/bin/env bash
 
 if ! command -v foreman &> /dev/null
 then
