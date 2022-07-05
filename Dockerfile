@@ -23,6 +23,7 @@ RUN apk add --no-cache \
     build-base \
     curl-dev \
     git \
+    gettext \
     libxml2-dev \
     libxslt-dev \
     pkgconf \
@@ -30,23 +31,24 @@ RUN apk add --no-cache \
     sqlite-libs \
     sqlite-dev \
     ruby-dev \
-    nodejs \
+    nodejs npm \
     yarn \
     yaml-dev \
     zlib-dev \
     && ( echo 'install: --no-document' ; echo 'update: --no-document' ) >>/etc/gemrc
-COPY . ./
-RUN bundle install -j4 \
+COPY Gemfile* ./
+RUN bundle install \
     && yarn install
+COPY . ./
 
 ARG RAILS_ENV
 ENV RAILS_ENV=${RAILS_ENV:-production}
 ARG RAILS_LOG_TO_STDOUT
 ENV RAILS_LOG_TO_STDOUT=${RAILS_LOG_TO_STDOUT:-true}
+ARG RAILS_SERVE_STATIC_FILES
+ENV RAILS_SERVE_STATIC_FILES=${RAILS_SERVE_STATIC_FILES:-true}
 
 ARG VERSION_CODE
 ENV VERSION_CODE=$VERSION_CODE
-
-EXPOSE 3000
 
 ENTRYPOINT [ "./bin/start" ]
