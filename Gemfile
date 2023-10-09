@@ -29,7 +29,7 @@ gem 'omniauth-rails_csrf_protection', '~> 1.0.1'
 gem 'pagy', '~> 5.10', '>= 5.10.1'
 gem 'pg'
 gem 'puma', '~> 5.0'
-gem 'rails', '~> 7.0.5', '>= 7.0.5.1'
+gem 'rails', '~> 7.1.0'
 gem 'redis', '~> 4.0'
 gem 'sprockets-rails'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
