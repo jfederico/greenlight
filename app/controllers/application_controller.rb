@@ -97,5 +97,8 @@ class ApplicationController < ActionController::Base
 
   def log_headers
     logger.info("Received HTTP Headers: #{request.headers}")
+    request.headers.each do |key, value|
+      Rails.logger.info("#{key}: #{value}")
+    end
   end
 end
