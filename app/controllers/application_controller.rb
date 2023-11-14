@@ -19,6 +19,8 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
 
+  before_action :log_headers
+
   # Returns the current signed in User (if any)
   def current_user
     return @current_user if @current_user
@@ -89,5 +91,11 @@ class ApplicationController < ActionController::Base
     raise 'Invalid domain' unless Tenant.exists?(name: tenant)
 
     tenant
+  end
+
+  private
+
+  def log_headers
+    logger.info("Received HTTP Headers: #{request.headers}")
   end
 end
