@@ -88,7 +88,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     aes_key_wrap (1.1.0)
     ast (2.4.2)
-    attr_required (1.0.1)
+    attr_required (1.0.2)
     aws-eventstream (1.2.0)
     aws-partitions (1.708.0)
     aws-sdk-core (3.170.0)
@@ -115,8 +115,8 @@ GEM
       rack (>= 1.6.11)
       rubyzip (>= 1.3.0)
       xml-simple (~> 1.1)
-    bigdecimal (3.1.4)
-    bindata (2.4.15)
+    bigdecimal (3.1.8)
+    bindata (2.5.0)
     bindex (0.8.1)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
@@ -133,7 +133,7 @@ GEM
     case_transform (0.2)
       activesupport
     childprocess (4.1.0)
-    concurrent-ruby (1.2.2)
+    concurrent-ruby (1.3.3)
     connection_pool (2.4.1)
     crack (0.4.5)
       rexml
@@ -143,7 +143,7 @@ GEM
     data_migrate (9.2.0)
       activerecord (>= 6.1)
       railties (>= 6.1)
-    date (3.3.3)
+    date (3.3.4)
     debug (1.7.1)
       irb (>= 1.5.0)
       reline (>= 0.3.1)
@@ -155,8 +155,9 @@ GEM
     dotenv-rails (2.8.1)
       dotenv (= 2.8.1)
       railties (>= 3.2)
-    drb (2.2.0)
-      ruby2_keywords
+    drb (2.2.1)
+    email_validator (2.2.4)
+      activemodel
     erubi (1.12.0)
     factory_bot (6.4.1)
       activesupport (>= 5.0.0)
@@ -165,12 +166,12 @@ GEM
       railties (>= 5.0.0)
     faker (3.1.1)
       i18n (>= 1.8.11, < 2)
-    faraday (2.7.10)
-      faraday-net_http (>= 2.0, < 3.1)
-      ruby2_keywords (>= 0.0.4)
+    faraday (2.9.2)
+      faraday-net_http (>= 2.0, < 3.2)
     faraday-follow_redirects (0.3.0)
       faraday (>= 1, < 3)
-    faraday-net_http (3.0.2)
+    faraday-net_http (3.1.0)
+      net-http
     ffi (1.15.5)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -214,7 +215,7 @@ GEM
       json
     hiredis (0.6.3)
     httpclient (2.8.3)
-    i18n (1.14.1)
+    i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     i18n-language-mapping (0.1.3.1)
     image_processing (1.12.2)
@@ -231,9 +232,10 @@ GEM
     jsbundling-rails (1.2.1)
       railties (>= 6.0.0)
     json (2.6.3)
-    json-jwt (1.16.3)
+    json-jwt (1.16.6)
       activesupport (>= 4.2)
       aes_key_wrap
+      base64
       bindata
       faraday (~> 2.0)
       faraday-follow_redirects
@@ -259,18 +261,20 @@ GEM
     mini_magick (4.12.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.5)
-    minitest (5.20.0)
+    minitest (5.24.1)
     msgpack (1.6.0)
     multi_json (1.15.0)
     mutex_m (0.2.0)
-    net-imap (0.4.1)
+    net-http (0.4.1)
+      uri
+    net-imap (0.4.14)
       date
       net-protocol
     net-pop (0.1.2)
       net-protocol
-    net-protocol (0.2.1)
+    net-protocol (0.2.2)
       timeout
-    net-smtp (0.4.0)
+    net-smtp (0.5.0)
       net-protocol
     nio4r (2.5.9)
     nokogiri (1.15.5)
@@ -278,27 +282,27 @@ GEM
       racc (~> 1.4)
     nokogiri (1.15.5-x86_64-linux)
       racc (~> 1.4)
-    omniauth (2.1.1)
+    omniauth (2.1.2)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
       rack-protection
     omniauth-rails_csrf_protection (1.0.1)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
-    omniauth_openid_connect (0.7.1)
+    omniauth_openid_connect (0.8.0)
       omniauth (>= 1.9, < 3)
       openid_connect (~> 2.2)
-    openid_connect (2.2.0)
+    openid_connect (2.3.0)
       activemodel
       attr_required (>= 1.0.0)
+      email_validator
       faraday (~> 2.0)
       faraday-follow_redirects
       json-jwt (>= 1.16)
-      net-smtp
+      mail
       rack-oauth2 (~> 2.2)
       swd (~> 2.0)
       tzinfo
-      validate_email
       validate_url
       webfinger (~> 2.0)
     os (1.1.4)
@@ -310,19 +314,20 @@ GEM
     pg (1.4.5)
     psych (5.1.1.1)
       stringio
-    public_suffix (5.0.3)
+    public_suffix (5.1.1)
     puma (5.6.7)
       nio4r (~> 2.0)
     racc (1.7.3)
-    rack (2.2.8)
-    rack-oauth2 (2.2.0)
+    rack (2.2.9)
+    rack-oauth2 (2.2.1)
       activesupport
       attr_required
       faraday (~> 2.0)
       faraday-follow_redirects
       json-jwt (>= 1.11.0)
       rack (>= 2.1.0)
-    rack-protection (3.1.0)
+    rack-protection (3.2.0)
+      base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
     rack-session (1.0.1)
       rack (< 3)
@@ -421,7 +426,6 @@ GEM
     ruby-progressbar (1.13.0)
     ruby-vips (2.1.4)
       ffi (~> 1.12)
-    ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
     selenium-webdriver (4.8.0)
       rexml (~> 3.2, >= 3.2.5)
@@ -442,22 +446,20 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     stringio (3.0.9)
-    swd (2.0.2)
+    swd (2.0.3)
       activesupport (>= 3)
       attr_required (>= 0.0.5)
       faraday (~> 2.0)
       faraday-follow_redirects
     syslog_protocol (0.9.2)
     thor (1.3.0)
-    timeout (0.4.0)
+    timeout (0.4.1)
     trailblazer-option (0.1.2)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
     unicode-display_width (2.4.2)
-    validate_email (0.1.6)
-      activemodel (>= 3.0)
-      mail (>= 2.2.5)
+    uri (0.13.0)
     validate_url (1.0.15)
       activemodel (>= 3.0.0)
       public_suffix
@@ -470,7 +472,7 @@ GEM
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (~> 4.0)
-    webfinger (2.1.2)
+    webfinger (2.1.3)
       activesupport
       faraday (~> 2.0)
       faraday-follow_redirects
@@ -520,7 +522,7 @@ DEPENDENCIES
   mini_magick (>= 4.9.5)
   omniauth (~> 2.1.0)
   omniauth-rails_csrf_protection (~> 1.0.1)
-  omniauth_openid_connect (>= 0.6.1)
+  omniauth_openid_connect (>= 0.8.0)
   pagy (~> 6.0, >= 6.0.0)
   pg
   puma (~> 5.6)
@@ -540,3 +542,8 @@ DEPENDENCIES
   webdrivers
   webmock
 
+RUBY VERSION
+   ruby 3.0.0p0
+
+BUNDLED WITH
+   2.2.3
