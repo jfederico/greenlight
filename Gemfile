@@ -14,7 +14,7 @@ gem 'bootsnap', require: false
 gem 'cssbundling-rails', '>= 1.3.3'
 gem 'data_migrate', '>= 9.2.0'
 gem 'dotenv-rails'
-gem 'google-cloud-storage', '~> 1.44', require: false
+gem 'google-cloud-storage', '~> 1.48', '>= 1.48.0', require: false
 gem 'hcaptcha'
 gem 'hiredis', '~> 0.6.0'
 gem 'i18n-language-mapping'
