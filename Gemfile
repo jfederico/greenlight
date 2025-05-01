@@ -51,7 +51,7 @@ group :test do
   gem 'factory_bot', '>= 6.4.1'
   gem 'factory_bot_rails', '>= 6.3.0'
   gem 'faker'
-  gem 'rspec-rails', '>= 6.0.4'
+  gem 'rspec-rails', '>= 8.0.0'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers', '~> 5.0'
   gem 'webdrivers'
