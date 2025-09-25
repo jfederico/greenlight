@@ -9,7 +9,7 @@ gem 'active_model_serializers', '>= 0.10.14'
 gem 'active_storage_validations', '>= 1.1.0'
 gem 'aws-sdk-s3', require: false
 gem 'bcrypt', '~> 3.1.7'
-gem 'bigbluebutton-api-ruby', '1.9.1'
+gem 'bigbluebutton-api-ruby', '2.0.0'
 gem 'bootsnap', require: false
 gem 'cssbundling-rails', '>= 1.3.3'
 gem 'data_migrate', '>= 9.2.0'
