@@ -14,7 +14,7 @@ gem 'bootsnap', require: false
 gem 'cssbundling-rails', '>= 1.3.3'
 gem 'data_migrate', '>= 9.2.0'
 gem 'dotenv-rails'
-gem 'google-cloud-storage', '~> 1.44', require: false
+gem 'google-cloud-storage', '~> 1.45', '>= 1.45.0', require: false
 gem 'hcaptcha'
 gem 'hiredis', '~> 0.6.0'
 gem 'i18n-language-mapping'
@@ -24,7 +24,7 @@ gem 'jsbundling-rails', '>= 1.2.1'
 gem 'jwt'
 gem 'mini_magick', '>= 4.9.5'
 gem 'omniauth', '~> 2.1.0'
-gem 'omniauth_openid_connect', '>= 0.6.1'
+gem 'omniauth_openid_connect', '>= 0.8.0'
 gem 'omniauth-rails_csrf_protection', '~> 1.0.1'
 gem 'pagy', '~> 6.0', '>= 6.0.0'
 gem 'pg'
